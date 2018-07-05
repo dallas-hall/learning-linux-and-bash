@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# read into multiple variables 1 line at a time
+# 0 status is returned while lines are read, non-0 status returned at EOF which ends the loop
+while read distro version release; do
+	printf "Distro: %s\tVersion: %s\tReleased: %s\n" \
+	"$distro" \
+	"$version" \
+	"$release" 
+# redirect a file to the while loop
+done < distros.txt
