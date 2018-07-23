@@ -1,0 +1,7 @@
+# This file contains code with comments.
+
+# This is a comment.
+# Followed by another comment.
+# Another comment be here.
+
+ls ~ | less
