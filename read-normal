@@ -1,8 +1,0 @@
-#!/bin/bash
-# read-normal: supplies a default value if the user presses the enter key.
-
-# -e handles input which permits input editing like the command line
-# -p display a string prompt
-# -i provide a default value.
-read -e -p "What is your username? " -i $USER
-echo "You answered: '$REPLY'"
