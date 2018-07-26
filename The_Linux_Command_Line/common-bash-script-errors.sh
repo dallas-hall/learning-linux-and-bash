@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/bin/bash -x
+# the -x enables tracing, which prints the commands after expansion.
+# PS4 has been modified in .bashrc with export PS4='$LINENO + ' to add line numbers
 
 # empty variable leads to shell expansion
 #number=
