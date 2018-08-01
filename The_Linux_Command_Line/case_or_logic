@@ -1,0 +1,39 @@
+#!/bin/bash
+
+clear
+cat <<- _MENU_
+Options:
+
+A. Display System Information.
+B. Display Disk Space.
+C. Display Home Space Utilisaation.
+Q. Quit.
+_MENU_
+
+read -p "Enter Selectiong [A, B, C, or Q] > "
+
+case "$REPLY" in
+	q|Q)
+		echo "Program terminated."
+		exit
+	;;
+	a|A)
+		uptime
+	;;
+	b|B)
+		df -h
+	;;
+	c|C)
+		if [[ "$(id -u)" -eq 0 ]]; then
+			echo "Home Space Utilisation (All Users)"
+			du -sh /home/*
+		else
+			echo "Home Space Utilisation ($USER)"
+			du -sh "$HOME"
+		fi
+	;;
+	*)
+		echo "Invalid entry."
+		exit 1
+	;;
+esac
