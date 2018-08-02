@@ -1,0 +1,18 @@
+#!/bin/bash
+
+echo "The shell provides positional parameters that contain the individual words from the command line.
+They are stored in the variables 0 through to 9.
+0 always contains the path of the executed script.
+The other numbers store the supplied arguments.
+
+\$0 = $0
+\$1 = $1
+\$2 = $2
+\$3 = $3
+\$4 = $4
+\$5 = $5
+\$6 = $6
+\$7 = $7
+\$8 = $8
+\$9 = $9
+"
