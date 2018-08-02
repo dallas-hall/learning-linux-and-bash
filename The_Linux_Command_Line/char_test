@@ -1,0 +1,23 @@
+#!/bin/bash
+
+read -n 1 -p "Type a character > "
+echo
+case "$REPLY" in
+	[[:upper:]])
+		echo "'$REPLY' is upper case.";;
+	[[:lower:]])
+		echo "'$REPLY' is lower case.";;
+	[[:alpha:]])
+		echo "'$REPLY' is alphabetic.";;
+	[[:digit:]])
+		echo "'$REPLY' is a number.";;
+	[[:punct:]])
+		echo "'$REPLY' is a punctuation symbol.";;
+	[[:graph:]])
+		echo "'$REPLY' is visible character.";;
+	[[:space:]])
+		echo "'$REPLY' is whitespace.";;
+	[[:xdigit:]])
+		echo "'$REPLY' is hexidecimal.";;
+esac
+
