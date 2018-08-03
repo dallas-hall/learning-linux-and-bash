@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# The $# variable contains how many arguments were supplied.
+echo "Number of arguments supplied: $#"
+
+index=1
+
+# for loop syntax @ http://tldp.org/HOWTO/Bash-Prog-Intro-HOWTO-7.html
+# $@ is the array that holds all the supplied arguments
+for arg in "$@"
+do
+	echo "Argument $index is $arg"
+	index=$((index + 1))
+done
