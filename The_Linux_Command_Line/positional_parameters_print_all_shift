@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# The $# variable contains how many arguments were supplied.
+echo "Number of arguments supplied: $#"
+
+index=1
+while [[ $# -gt 0 ]]; do
+	echo "Argument $index = $1"
+	index=$((index + 1))
+	# this moves the values of the positional arguments done, e.g. $2 into $1.
+	shift
+done
