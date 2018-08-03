@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# The $# variable contains how many arguments were supplied.
+echo "Number of arguments supplied: $#"
