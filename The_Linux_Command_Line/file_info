@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# basename removes the leading portion of the path which results in a filename only
+PROGRAM_NAME="$(basename "$0")"
+echo "Running $PROGRAM_NAME"
+
+if [[ -e "$1" ]]; then
+	echo -e "\nFile type: "
+	file "$1"
+	echo -e "\nFile status: "
+	stat "$1"
+	exit 0
+else
+	echo "$PROGRAM_NAME: usage: $PROGRAM_NAME file" >&2
+	exit 1
+fi
