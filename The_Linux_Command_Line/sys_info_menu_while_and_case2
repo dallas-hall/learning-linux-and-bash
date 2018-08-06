@@ -1,0 +1,71 @@
+#!/bin/bash
+
+# Number of seconds to display the results
+DELAY=5
+
+report_system_info () {
+	echo "Hostname:	$HOSTNAME."
+	lsb_release -a
+	uptime
+	sleep "$DELAY"
+}
+
+report_disk_and_memory_usage () {
+	df -h
+	free -h
+	sleep "$DELAY"
+}
+
+report_home_space () {
+	if [[ "$(id -u)" -eq 0 ]]; then
+		echo "Home Space Utilisation (All Users)"
+		du -sh /home/*
+	else
+		echo "Home Space Utilisation ($USER)"
+		du -sh "$HOME"
+	fi
+	sleep "$DELAY"
+}
+
+quit () {
+	echo "Program terminated."
+	sleep "$DELAY"
+	clear
+	exit
+}
+
+invalid_input () {
+	echo "Invalid entry." >&2
+	sleep "$DELAY"
+}
+
+while [[ "$REPLY" != 0 ]]; do
+	clear
+	cat <<- _EOF_
+	Please Select:
+
+	1. Display System Information
+	2. Display Disk & Memory Space
+	3. Display Home Space Utilisation
+	0. Quit
+_EOF_
+	read -p "Enter selection [0-3] > "
+
+	case "$REPLY" in
+		0)
+			quit
+		;;
+		1)
+			report_system_info
+		;;
+		2)
+			report_disk_and_memory_usage
+		;;
+		3)
+			report_home_space
+		;;
+		*) 
+			invalid_input
+		;;
+	esac
+done
