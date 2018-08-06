@@ -1,0 +1,143 @@
+#!/bin/bash
+# Program to output system information.
+set -x
+# global variables
+# $0 stores the program's absolute path and filename
+# basename remvoes the path and leaves the filename
+PROGRAM_NAME="$(basename "$0")"
+TITLE="System Information Report For $HOSTNAME"
+CURRENT_TIME="$(date +"%x %r %Z")"
+TIMESTAMP="Generated $CURRENT_TIME, by $USER"
+
+# functions
+report_sys_info () {
+	cat <<- _MESSAGE_
+		<h2>System Information</h2>
+		<pre>$(lsb_release -a)</pre>
+		<pre>$(uptime)</pre>
+		_MESSAGE_
+	return
+}
+
+report_sys_space () {
+	cat <<- _MESSAGE_
+		<h2>Disk Space & Memory Utilisation</h2>
+		<pre>$(df -h)</pre>
+		<pre>$(free -h)</pre>
+		_MESSAGE_
+	return
+}
+
+report_home_space () {
+	if [[ "$(id -u)" -eq 0 ]]; then
+		cat <<- _MESSAGE_
+			<h2>Home Space Utilisation (All Users)</h2>
+			<pre>$(du -sh /home/*)</pre>
+			_MESSAGE_
+	else
+		cat <<- _MESSAGE_
+			<h2>Home Space Utilisation ($USER)</h2>
+			<pre>$(du -sh $HOME)</pre>
+			_MESSAGE_
+	fi
+	return
+}
+
+usage () {
+	cat <<- _MESSAGE_
+	"$PROGRAM_NAME: usage: $PROGRAM_NAME [[-f | --file] filename | [-i | --interactive] [-h | --help]]"
+	_MESSAGE_
+}
+
+write_html () {
+	cat <<- _MESSAGE_
+	<!doctype html>
+	<html>
+	<head>
+		<title>Report</title>
+	</head>
+	<body>
+		<h1>$TITLE</h1>
+		<p>$TIMESTAMP</p>
+		$(report_sys_info)
+		$(report_sys_space)
+		$(report_home_space)
+	</body>
+	</html>
+	_MESSAGE_
+	return
+}
+
+quit () {
+	echo "Program terminated."
+	exit 0
+}
+
+# process the command line options
+interactive=
+filename=
+
+# -n is True if the length of string is non-zero. 
+while [[ -n "$1" ]]; do
+	case "$1" in
+		-f | --file)
+			# use shift to move the postional parameters done 1 (e.g. $0 is now $1, $1 is now $2 etc.
+			# in this case shift removes -f | -file from $1 into $0 and the filename in $2 into $1
+			shift
+			filename="$1"
+		;;
+		-i | --interactive)
+			interactive=1
+			exit
+		;;
+		-h | --help)
+			usage
+			exit
+		;;
+		*)
+			# redirect the output of usage to standard error
+			usage >&2
+			exit 1
+		;;
+	esac
+	# move along again 
+	shift
+done
+
+if [[ -n "$interactive" ]]; then
+	while true; do
+		read -p "Enter name of output file: " filename
+		if [[ -e "$filename" ]]; then
+			read -p "'$filename' exists, overwrite? [y/n/q] > "
+			case "$REPLY" in
+				y|Y)
+					break
+				;;
+				q|Q)
+					quit
+				;;
+				*)
+					continue
+				;;
+			esac
+		# -z is True if the length of string is zero
+		elif [[ -z "$filename" ]]; then
+			continue
+		else
+			break
+		fi
+	done
+fi
+
+if [[ -n "$filename" ]]; then
+	# -f is True if file exists and is a regular file.
+	if touch "$filename" && [[ -f "$filname" ]]; then
+		write_html > "$filename"
+	else
+		echo "$PROGRAM_NAME: Cannot write to file '$filename'" >&2
+		exit 1
+	fi
+else
+	write_html
+fi
+set +x
