@@ -1,6 +1,6 @@
 #!/bin/bash
 # Program to output system information.
-set -x
+
 # global variables
 # $0 stores the program's absolute path and filename
 # basename remvoes the path and leaves the filename
@@ -76,6 +76,7 @@ quit () {
 # process the command line options
 interactive=
 filename=
+extension='.html'
 
 # -n is True if the length of string is non-zero. 
 while [[ -n "$1" ]]; do
@@ -88,7 +89,6 @@ while [[ -n "$1" ]]; do
 		;;
 		-i | --interactive)
 			interactive=1
-			exit
 		;;
 		-h | --help)
 			usage
@@ -106,7 +106,9 @@ done
 
 if [[ -n "$interactive" ]]; then
 	while true; do
-		read -p "Enter name of output file: " filename
+		read -p "Enter name of output file, the extension html will be added automatically. > " filename
+		# Concatenate filename and extension
+		filename+=$extension
 		if [[ -e "$filename" ]]; then
 			read -p "'$filename' exists, overwrite? [y/n/q] > "
 			case "$REPLY" in
@@ -131,7 +133,7 @@ fi
 
 if [[ -n "$filename" ]]; then
 	# -f is True if file exists and is a regular file.
-	if touch "$filename" && [[ -f "$filname" ]]; then
+	if touch "$filename" && [[ -f "$filename" ]]; then
 		write_html > "$filename"
 	else
 		echo "$PROGRAM_NAME: Cannot write to file '$filename'" >&2
@@ -140,4 +142,3 @@ if [[ -n "$filename" ]]; then
 else
 	write_html
 fi
-set +x
