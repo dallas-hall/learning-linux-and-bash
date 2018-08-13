@@ -1,0 +1,88 @@
+#!/bin/bash
+
+# Number of seconds to display the results
+DELAY=5
+
+report_system_info () {
+	echo "Hostname:	$HOSTNAME."
+	lsb_release -a
+	uptime
+	sleep "$DELAY"
+}
+
+report_disk_and_memory_usage () {
+	df -h
+	free -h
+	sleep "$DELAY"
+}
+
+report_home_space () {
+	local format="%8s%10s%10s\n"
+	local i dir_list total_files total_dirs total_size user_name
+
+	if [[ "$(id -u)" -eq 0 ]]; then
+		dir_list=/home/*
+		user_name="All Users"
+	else
+		dir_list="$HOME"
+		user_name="$USER"
+	fi
+
+	echo "<h2>Home Space Utilisation ($user_name)</h2>"
+
+	for i in $dir_list; do
+		total_files="$(find "$i" -type f | wc -l)"
+		total_dirs="$(find "$i" -type d | wc -l)"
+		total_size="$(du -sh "$i" | cut -f 1)"
+
+		echo "<h3>$i</h3>"
+		echo "<pre>"
+		printf "$format" "Dirs" "Files" "Size"
+		printf "$format" "----" "-----" "----"
+		printf "$format" "$total_dirs" "$total_files" "$total_size"
+		echo "</pre>"
+
+	done
+	sleep "$DELAY"
+}
+
+quit () {
+	echo "Program terminated."
+	exit
+}
+
+invalid_input () {
+	echo "Invalid entry." >&2
+	sleep "$DELAY"
+}
+
+while [[ "$REPLY" != 0 ]]; do
+	clear
+	cat <<- _EOF_
+	Please Select:
+
+	1. Display System Information
+	2. Display Disk & Memory Space
+	3. Display Home Space Utilisation
+	0. Quit
+_EOF_
+	read -p "Enter selection [0-3] > "
+
+	case "$REPLY" in
+		0)
+			quit
+		;;
+		1)
+			report_system_info
+		;;
+		2)
+			report_disk_and_memory_usage
+		;;
+		3)
+			report_home_space
+		;;
+		*) 
+			invalid_input
+		;;
+	esac
+done
