@@ -1,5 +1,6 @@
 #!/bin/bash
-cat <<- _OUTPUT_
+
+cat <<- '_OUTPUT_'
 [INFO] This is the code being executed.
 foo=
 echo ${foo:-"This is the value if foo is unset."}
@@ -12,7 +13,7 @@ foo=
 echo ${foo:-"This is the value if foo is unset."}
 echo $foo
 
-cat <<- _OUTPUT_
+cat <<- '_OUTPUT_'
 [INFO] This is the code being executed.
 foo=bar
 echo ${foo:-"This is the value if foo is unset."}
