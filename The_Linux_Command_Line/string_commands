@@ -1,0 +1,26 @@
+#!/bin/bash
+
+cat <<- '_OUTPUT_'
+[INFO] Various string commands.
+[INFO] The current command shows how to return the string's length.
+[INFO] The commands being executed are:
+foo="This string is long."
+echo "'$foo' is ${#foo} characters long."
+[INFO] The output is:
+_OUTPUT_
+foo="This string is long."
+echo "'$foo' is ${#foo} characters long."
+
+cat <<- '_OUTPUT_'
+[INFO] The current command shows how to do substring from n to end.
+[INFO] The commands being executed are:
+echo ${foo:5}
+_OUTPUT_
+echo ${foo:5}
+
+cat <<- '_OUTPUT_'
+[INFO] The current command shows how to do substring from n + m.
+[INFO] The commands being executed are:
+echo ${foo:5:6}
+_OUTPUT_
+echo ${foo:5:6}
