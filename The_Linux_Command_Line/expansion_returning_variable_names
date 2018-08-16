@@ -1,0 +1,10 @@
+#!/bin/bash
+
+cat <<- '_OUTPUT_'
+This command returns the names of existing variables that begin with prefix.
+[INFO] The command being executed is:
+echo ${!BASH*}
+
+[INFO] The output is:
+_OUTPUT_
+echo ${!BASH*}
