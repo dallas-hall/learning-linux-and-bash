@@ -24,3 +24,12 @@ cat <<- '_OUTPUT_'
 echo ${foo:5:6}
 _OUTPUT_
 echo ${foo:5:6}
+
+cat <<- '_OUTPUT_'
+[INFO] The current command shows how to do substring from -n + m. Notice the space between : and - as :- is another command/
+[INFO] The commands being executed are:
+echo ${foo: -5}
+echo ${foo: -5:2}
+_OUTPUT_
+echo ${foo: -5}
+echo ${foo: -5:2}
