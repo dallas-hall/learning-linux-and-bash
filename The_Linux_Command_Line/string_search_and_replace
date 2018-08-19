@@ -1,0 +1,23 @@
+#!/bin/bash
+
+cat <<- '_EOF_'
+echo "[INFO] This shows how to do search and replace within strings. The syntax is source/pattern/replace. The single / replaces the first instance only. The double / replaces all. The /# matches at the beginning of the string. The /% matches at the end of the string."
+echo "[INFO] The commands being executed are:"
+foo=JPG.JPG
+echo "$foo"
+echo ${foo/JPG/jpg}
+echo ${foo//JPG/jpg}
+ecoh ${foo/#JPG/jpg}
+echo ${foo/%JPG/jpg}
+_EOF_
+
+echo ''
+echo "[INFO] This shows how to do search and replace within strings. The syntax is source/pattern/replace. The single / replaces the first instance only. The double / replaces all. The /# matches at the beginning of the string. The /% matches at the end of the string."
+echo "[INFO] The commands being executed are:"
+foo=JPG.JPG
+echo "$foo"
+echo ${foo/JPG/jpg}
+echo ${foo//JPG/jpg}
+echo ${foo/#JPG/jpg}
+echo ${foo/%JPG/jpg}
+
