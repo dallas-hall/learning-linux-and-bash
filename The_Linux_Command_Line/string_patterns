@@ -1,0 +1,27 @@
+#!/bin/bash
+
+cat <<- '_OUTPUT_'
+[INFO] The current command shows how to remove the leading portion of a string using a pattern.
+[INFO] The commands being executed are:
+foo=file.txt.zip
+echo "$foo"
+echo ${foo#*.}
+echo ${foo##*.}
+_OUTPUT_
+foo=file.txt.zip
+echo "$foo"
+echo ${foo#*.}
+echo ${foo##*.}
+
+cat <<- '_OUTPUT_'
+[INFO] The current command shows how to remove the trailing portion of a string using a pattern.
+[INFO] The commands being executed are:
+echo ${foo%*.}
+echo ${foo%%*.}
+_OUTPUT_
+foo=file.txt.zip
+echo "$foo"
+echo ${foo%.*}
+echo ${foo%%.*}
+
+
