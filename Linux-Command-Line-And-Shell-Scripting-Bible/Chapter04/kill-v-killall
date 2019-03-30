@@ -1,0 +1,5 @@
+echo "# kill command must use process IDs. It uses the TERM signal by default. Use the KILL signal if a process ignores TERM."
+echo "$ kill 12345"
+echo "# killall command can use process names and wildcards."
+echo "$ killall http*"
+echo "# You must be the process owner or root user to use either to kill processes."
