@@ -1,0 +1,4 @@
+echo "# Change modification time"
+echo "$ touch existing-file"
+echo "# Change access time"
+echo "$ touch -a existing-file"
