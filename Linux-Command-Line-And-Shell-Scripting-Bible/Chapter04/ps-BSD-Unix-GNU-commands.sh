@@ -1,0 +1,7 @@
+echo "# ps supports 3 styles of command parameters, Unix, BSD, and GNU."
+echo "# Unix style parameters are preceded with a dash. e.g. ps -ef"
+echo "# BSD style parameters are preceded with nothing. e.g. ps l"
+echo "# GNU style parameters are preceded with double dashes. e.g. ps --forest"
+echo "$ ps aux"
+echo "$ ps -ef"
+echo "$ ps -ef --forest"
