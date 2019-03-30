@@ -1,0 +1,5 @@
+echo "$ cd /absolute/path/to/file"
+echo "$ cd relative/path/to/file"
+echo "# Go back to your /home folder"
+echo "$ cd ~"
+echo "$ cd"
