@@ -1,8 +1,0 @@
-echo "$ cd /absolute/path/to/file"
-echo "$ cd relative/path/to/file"
-echo "# Go back to your /home folder"
-echo "$ cd ~"
-echo "$ cd"
-echo "# Special characters for paths . and .."
-echo "# . is the current directory."
-echo "# .. is the parent directory above you in the filesystem."
