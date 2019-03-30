@@ -1,0 +1,8 @@
+echo "# head is used to look at start of a file, 10 lines by default."
+echo "$ head filename"
+echo "# tail is used to look at the end of file, 10 lines by default."
+echo "$ tail filename"
+echo "# both support -n which controls how many lines to display."
+echo "$ head -n20 filename; tail -n 20 filename"
+echo "# tail can also monitor files in realtime, updating the display as their contents update. Use -f"
+echo "$ tail -f /var/log/file-to-monitor-in-real-time"
