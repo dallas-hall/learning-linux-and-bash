@@ -1,0 +1,8 @@
+echo "# Display line numbers with -n"
+echo "$ cat -n filename"
+echo "# Display lines with text only with -b"
+echo "$ cat -b filename"
+echo "# Replace tabs with space with -T"
+echo "$ cat -T filename"
+echo "# Squash consecutive blank lines with -s"
+echo "$ cat -s filename"
