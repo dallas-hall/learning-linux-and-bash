@@ -1,0 +1,2 @@
+echo "$ mount"
+mount
