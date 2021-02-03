@@ -6,6 +6,7 @@ OLD_IFS=$IFS
 FILE=hosts
 hosts=()
 
+# Read the file line by line - https://stackoverflow.com/a/1521498
 while IFS="" read -r line || [ -n "$line" ]
 do
   if [[ "$line" =~ ^.*[-]+.*$ ]]; then
@@ -44,4 +45,7 @@ for i in "${hosts[@]}"; do
 	printf "Executing %s\n" "$cmd"
 	eval $cmd
 done
+
+# Reset IFS back to default.
+IFS=$OLD_IFS
 
