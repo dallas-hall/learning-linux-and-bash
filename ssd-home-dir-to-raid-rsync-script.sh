@@ -23,4 +23,6 @@ rsync --archive --executability --delete-after \
 --exclude="Videos" --exclude="Pictures" \
 --exclude=".cache" --exclude=".local/share/Trash/files" \
 --exclude=".dropbox-dist" \
+--exclude=".local/share/Steam/steamapps/common/PAYDAY 2" \
+--exclude=".local/share/Steam/steamapps/common/dota 2 beta" \
 /home/blindcant/ /media/veracrypt2/dallas-linux-home/
