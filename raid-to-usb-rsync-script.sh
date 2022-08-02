@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+export RAID_PATH="/raid"
+export USB_PATH="/media/veracrypt1"
+
 # https://stackoverflow.com/a/42876846
 if [[ "$EUID" = 0 ]]; then
 	echo "[INFO] Already root."
@@ -28,22 +31,23 @@ fi
 #	exit 1
 #fi
 
-if grep -qs '/media/veracrypt2' /proc/mounts; then
-	echo "RAID mounted, copying files."
+if grep -qs "$RAID_PATH" /proc/mounts; then
+	echo "[INFO] RAID mounted, copying files from $RAID_PATH/"
 else
-	echo "RAID not mounted, exiting script with no changes."
+	echo "[ERROR] RAID not mounted, exiting script with no changes."
 	exit 1
 fi
 
-if grep -qs '/media/veracrypt8' /proc/mounts; then
-	echo "USB mounted, copying files."
+if grep -qs "$USB_PATH" /proc/mounts; then
+	echo "[INFO] USB mounted, copying files to $USB_PATH/"
 else
-	echo "USB not mounted, exiting script with no changes."
+	echo "[ERROR] USB not mounted, exiting script with no changes."
 	exit 1
 fi
 
+# The trailing / is needed here.
 rsync --archive --executability --delete \
 --progress --stats --ignore-errors \
 --human-readable --force \
 --exclude="lost+found" --exclude=".Trash*" \
-/media/veracrypt2/ /media/veracrypt8/
+$RAID_PATH/ $USB_PATH/

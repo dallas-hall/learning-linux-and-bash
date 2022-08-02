@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+export RAID_PATH="/raid"
+
 #if [[ -d '/media/veracrypt2/' ]]; then
 #	echo "[INFO] RAID mounted, rsyncing files."
 #else
@@ -7,10 +9,10 @@
 #	exit 1
 #fi
 
-if grep -qs '/media/veracrypt2' /proc/mounts; then
-	echo "RAID mounted, copying files."
+if grep -qs "$RAID_PATH" /proc/mounts; then
+	echo "[INFO] RAID mounted, copying select $HOME files to $RAID_PATH"
 else
-	echo "RAID not mounted, exiting script with no changes."
+	echo "[ERROR] RAID not mounted, exiting script with no changes."
 	exit 1
 fi
 
@@ -25,4 +27,4 @@ rsync --archive --executability --delete-after \
 --exclude=".dropbox-dist" \
 --exclude=".local/share/Steam/steamapps/common/PAYDAY 2" \
 --exclude=".local/share/Steam/steamapps/common/dota 2 beta" \
-/home/blindcant/ /media/veracrypt2/slash/home/dallas/
+/home/dallas/ "$RAID_PATH"/slash/home/dallas/

@@ -3,4 +3,4 @@
 rsync --archive --executability \
 --progress --stats --ignore-errors \
 --human-readable --force \
-/home/blindcant/Dropbox/Sync/KeePassXC/blindcant.kdbx /home/blindcant/Documents/KeePassXC/blindcant-from-dropbox.kdbx
+/home/dallas/Dropbox/Sync/KeePassXC/dallas.kdbx /home/dallas/Documents/KeePassXC/dallas-from-dropbox.kdbx
