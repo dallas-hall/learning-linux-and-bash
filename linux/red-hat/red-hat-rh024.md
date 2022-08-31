@@ -1,49 +1,130 @@
 # RH024 - RHEL Technical Overview
 
-Found at https://rhtapps.redhat.com/promo/course/rh024
+These notes are a combination of https://rhtapps.redhat.com/promo/course/rh024, https://www.udemy.com/course/red-hat-enterprise-linux-technical-overview/, and https://www.udemy.com/course/red-hat-enterprise-linux-8-technical-overview/
+
+- [RH024 - RHEL Technical Overview](#rh024---rhel-technical-overview)
+  - [Why Linux?](#why-linux)
+  - [Open Source Software](#open-source-software)
+    - [Copyleft Licence Versus Permissive Licences](#copyleft-licence-versus-permissive-licences)
+  - [What Is A Linux Distribution](#what-is-a-linux-distribution)
+  - [Shell Introduction](#shell-introduction)
+  - [Kernel and User Spaces](#kernel-and-user-spaces)
+  - [GUI](#gui)
+  - [File Management](#file-management)
+  - [File System Hierarchy](#file-system-hierarchy)
+  - [vim](#vim)
+  - [Users & Groups](#users--groups)
+  - [File Permissions](#file-permissions)
+  - [Software Management](#software-management)
+  - [Network Configuration](#network-configuration)
+  - [System Startup Processes](#system-startup-processes)
+  - [Container Introduction](#container-introduction)
+  - [Cockpit Overview](#cockpit-overview)
+  - [RHEL Introduction](#rhel-introduction)
+
+## Why Linux?
+
+A few reasons why to learn Linux.
+* Linux is everywhere!
+  * Most web servers run Linux.
+  * Most cloud servers run Linux.
+  * Smart devices (TVs, phones, etc).
+  * Many other devices run Linux (e.g. IoT, point of sales systems, etc)
+  * Almost all top 500 supercomputers use Linux.
+* 90% of the fortune 500 companies use Linux.
+* It is open source and has a lot of contributers to it.
+* It is modular, which is great for backwards compatibility and customisation.
+* There are many jobs available relating to Linux.
 
 ## Open Source Software
 
-Anyone can use the software, view the code, and contribute to the code or project. These projects can be volunteer and financially sponsored employees.
+What is open source software and why does it matter? All software is protected by copyright law and the usage licence the developer applies to it.
 
-Fedora goes into CentOS Stream which goes into Red Hat Enterprise Linux (RHEL).
+Traditionally software was written by companies, the source code being compiled into a binary, and end users are only allowed to run that binary. Any other use case was prohibited and you needed to pay to use the software. This is proprietry closed source software.
+
+Open source software allows anyone to view the code, compile the code, run the program binary, and even modify the code or contribute to the project. Some open source software is [completely free](https://en.wikipedia.org/wiki/Free_software). Thus open source software provides end users with more options than just paying for and running an executable binary.
+
+Open source software projects can be run by volunteers and/or financially sponsored employees. For example, the Fedora project is run by volunteers and paid Red Hat emmployees. Fedora goes into Red Hat's free CentOS Stream which goes into Red Hat's paid Red Hat Enterprise Linux (RHEL).
+
+Open source software encourages open standards, which provide a standard universal way to do something. This encourages multiple vendors to implement solutions that will work together using this open standard.
+
+### Copyleft Licence Versus Permissive Licences
+
+[Copyleft licences](https://en.wikipedia.org/wiki/Copyleft) are the legal technique of granting certain freedoms over copies of copyrighted works with the requirement that the same rights be preserved in derivative works. e.g. GPL, Mozilla.
+
+[Permissive licences](https://en.wikipedia.org/wiki/Permissive_software_license) carries only minimal restrictions on how the software can be used, modified, and redistributed, usually including a warranty disclaimer. Open source code can be combined with closed source code. e.g. MIT, Apache, BSD.
+
+## What Is A Linux Distribution
+
+A Linux distribution (i.e. distro) is simply an installable operating system built from the Linux kernel and the supporting user programs and libraries that are in needed to create a working system. There are many different Linux distributions from companies and people alike.
 
 ## Shell Introduction
 
-It is the environment in which you will work, it is the interface between and the rest of the system. This is where users execute their commands. RHEL uses Bash by default.
+The shell is the command line environment where you will work. It is the interface between the user and the rest of the system. The shell is where users type in and execute their commands.
+
+RHEL uses Bash as its default. Bash provides a powerful scripting language which can be used to automate tasks in the shell. Bash is the most popular shell amongst Linux distributions.
+
+A headless server is a server that doesn't have a GUI, it only has a CLI shell available. This is common in the enterprise and in the cloud.
+
+Shell commands are typically made up of 3 things `$COMMAND $OPTIONS $ARGUMENTS`:
+1. The name of the command you are running.
+2. The command options, which are typically denoted with a `-` or `--` and these change the default behaviour of the command
+3. The command arguments, the things (e.g. files) that the command is working with.
+
+You can save yourself a lot of typing by using Bash completion, which is pressing the tab key to auto-complate a variety of things like command names, command options, and filenames.
 
 ## Kernel and User Spaces
 
-kernel is the heart of the linux os, it is responsible for scheduling running programs, file management, and security. this is kernel space (e.g. drivers, networking, etc). it is also responsible for supporting user programs (e.g. shell, browser), that run in user space
+The kernel is the heart of the linux operating system. It is responsible for scheduling running programs, file management, memory management, hardware management, networking, security, etcetera.
 
-user space programs interact with the kernel through special devices or system calls that they make. each running program is called a process and it has its own private virtual memory space, and runs as a particular user:group so it can access files on the file system. a process has a state and an id called a PID.
+Kernel space (e.g. drivers, networking, etc) is where all kernel related processes run. All non-kernal programs (e.g. a shell or browser) run in user space.
 
-there are 3 types of processes
-- user processes, generally assocaited with a user and are associated with a terminal. they can be run in the foreground (consuming the terminal input) or in the background (the terminal is available for input)
-- daemons - processes that aren't associated with a terminal at all, they are started up by the system. in ps the tty is ?
-- kernel threads - these are parts of the kernel that are running as if they were regular user processes or system daemons, and they are not associated with a terminal. in ps they are enclosed in square brackets.
+User space programs interact with the kernel through special devices or system calls that they make. Each running program is called a process and it has its own private virtual memory space, and runs as a particular `user:group` so it can access files on the file system. A process has a state (e.g. running) and a unique process identification number called a PID.
 
-tty = teletype
-pts = pseudo terminal session
-ppid = parent process id
+There are 3 types of processes:
+1. **User processes** are generally assocaited with a user and are associated with a terminal. They can be run in the foreground (consuming the terminal input) or in the background (the terminal is available for input).
+2. **Daemons processes** aren't associated with a terminal at all, They are started up by the system. In `ps` the tty is ?.
+3. **Kernel threads** are parts of the kernel that are running as if they were regular user processes or system daemons. They are not associated with a terminal. In `p`s they are enclosed in square brackets, e.g. `[kworker/1:0-events]`.
+
+In `ps` `tty` means teletype, `pts` means pseudo terminal session, and `ppid` is parent process ID.
 
 `ps aux` and `ps -elfy` are the same.
 
 ## GUI
 
-The default GUI in RHEL is Gnome 3. 
-Activities tricks:
+The GUI is divided into 3 main components:
+1. The X Window system, which provides basic infrastructure that is used by graphical applications to draw things on the monitor and take input from keyboards and mice.
+2. Window managers or desktop environments. A window manager controls the placement and appearance of windows on a monitor. A desktop environment is a window manager plus additional software,
+3. Graphical applications are programs that have a GUI, e.g. Firefox or Chrome browser.
+
+The default desktop environment in RHEL is Gnome 3.
+
+Gnome Activities tricks:
 * Can right click and add program icons to the dock.
 * Can drag open applications to the right hand side to put them into another workspace.
 
 ## File Management
 
-Pretty much everything is a file in Linux. Coloured output with ls makes it easier to see the differences in types of files.
-Block files are special files that represent real physical storage devices. Some files inside of /dev will be the storage files, you can see them with `ls -l` and look for the `b` in the first letter of the file attributes.
--r is a common command option that means recursively apply the command to all objects within the starting location, and the at the end apply it to the starting location.
+Pretty much everything is a file in Linux. All of them can be treated as a stream of bytes which can be read and written type like regular file I/O. There are 7 types of files in Linux:
+1. Regular files, containing text or binary.
+2. Folders or directories, are used to contain files and folders.
+3. Symbolic links, text files that are used as a pointer to another location on the file system.
+4. Character devices, which is used for writing streams of data to, e.g. a tape device.
+5. Block devices, which is used to create file systems on, e.g. a hard disk.
+6. Named pipe, which is used by processes to talk to each other.
+7. Named socket, which is used by processes to talk to each other.
+
+Coloured output with `ls` makes it easier to see the differences in types of files.
+
+Block files are special files that represent real physical storage devices. Some files inside of `/dev` will be the storage files, you can see them with `ls -l` and look for the `b` in the first letter of the file attributes.
+
+`-r` is a common command option that means recursively apply the command to all objects within the starting location, and the at the end apply it to the starting location.
+
+`hexdump` can be used to the view the hexadecimal representation of binary in a file, whether its a text file or a block device files like `/dev/sda`
 
 ## File System Hierarchy
 
+All files in the Linux filesystem are organised into one unified hierachy of folder and files, wtih `/` being the top of the hierarchy. You can think of the Linux filesystem is an inverted tree. The tree trunk is `/`, the branches are the folders (e.g. `/home` and the leaves are the files inside of those folders (e.g. `/root/.bash_rc`). Because the Linux filesystem is a single unified hierachy, all storage devices are located at or inside of `/`. There are a variety of folders commonly found in the Linux filesystem.
 * On Fedora, CentOS, and RHEL `/bin` and `/sbin` are symlinked to `/usr/bin/` and `/usr/sbin/` respectively.
 * `/usr` stands for Unix System Resources and it contains a number of important directories.
 You can use `whereis` to find where a command is.
@@ -56,25 +137,33 @@ You can use `whereis` to find where a command is.
 
 ## vim
 
-EX COMMAND actually means EXTENDED COMMAND mode.
-`Shift` + double `z` will save and exit `vim` when the file already has a name.
+`vi` is in the POSIX standard so it will always be installed on the system, `vim` is `vi` improved. It has ia few modes:
+1. Command mode, this is the default mode, any key press is treated as a command.
+2. Extra command mode (i.e. ex command mode), press `:` to enter this mode to enter additional complex commands.
+3. Insert mode, press `i` to enter this mode and any key press is treated as typing into the file
+4. Visual mode, press `v` to enter this mode and you can highlight and select text for copying and pasting.
+
+`Shift` + double `z` will save and exit `vim` when the file already has a name, this is the same as `wq` or `x`.
+
+Use `vimtutor` to learn the basics.
 
 ## Users & Groups
 
-A user identifers who are you on the Linux system.
-* A user can be a member of many group.
+Linux is a multi-user system and may have more than 1 person using it at the same time. There are also different processes running on the system that need to be uniquely identified. So a user identifers who are you on the Linux system. There are 3 types of user accounts in Linux
+1. Regular human users, they can log in and have their own private files and folders.
+2. System users, these are programs running on the system that also have their own private files and folders.
+3. Root user, i.e. the super user, a user that can do anything on the system.
+
+Some basic rules about users and groups:
+* A user can be a member of many groups.
 * When a user is created there is also a group created with the same name of the username. The user is automatically added to this group. This is called the primary group.
 * All other groups that the user is a member of are called supplementary groups.
-
-Everything in a system is identifiable through a numeric ID.
-* A user ID is the numeric identifier of the user.
-* Groups have group IDs as well.
-
-When deleting a user, the user's data is not autoamtically deleted (i.e. their $HOME remains).
-
-User account information is stored inside a file called `/etc/passwd` but their password is stored inside `/etc/shadow`
-
-`whoami` tells you who you are currently logged in as.
+* Every user has a unique user ID number, known as a uid.
+* Every group has a unique group ID number, known as a guid.
+* The uid and guid for the user's primary group are typically the same.
+* When deleting a user, the user's `$HOME` is not automatically deleted.
+* User account information is stored inside a file called `/etc/passwd` but their password is stored inside `/etc/shadow`.
+* The `wheel` group is commonly used to grant `sudo` access to users.
 
 ## File Permissions
 
