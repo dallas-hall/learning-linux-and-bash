@@ -2,6 +2,8 @@
 
 These notes are a combination of https://rhtapps.redhat.com/promo/course/rh024, https://www.udemy.com/course/red-hat-enterprise-linux-technical-overview/, and https://www.udemy.com/course/red-hat-enterprise-linux-8-technical-overview/
 
+All of the information here is stuff that wasn't covered in https://linuxcommand.org/tlcl.php
+
 - [RH024 - RHEL Technical Overview](#rh024---rhel-technical-overview)
   - [Why Linux?](#why-linux)
   - [Open Source Software](#open-source-software)
@@ -18,9 +20,7 @@ These notes are a combination of https://rhtapps.redhat.com/promo/course/rh024, 
   - [Software Management](#software-management)
   - [Network Configuration](#network-configuration)
   - [System Startup Processes](#system-startup-processes)
-  - [Container Introduction](#container-introduction)
-  - [Cockpit Overview](#cockpit-overview)
-  - [RHEL Introduction](#rhel-introduction)
+  - [Getting Help & Learning More](#getting-help--learning-more)
 
 ## Why Linux?
 
@@ -65,13 +65,6 @@ The shell is the command line environment where you will work. It is the interfa
 RHEL uses Bash as its default. Bash provides a powerful scripting language which can be used to automate tasks in the shell. Bash is the most popular shell amongst Linux distributions.
 
 A headless server is a server that doesn't have a GUI, it only has a CLI shell available. This is common in the enterprise and in the cloud.
-
-Shell commands are typically made up of 3 things `$COMMAND $OPTIONS $ARGUMENTS`:
-1. The name of the command you are running.
-2. The command options, which are typically denoted with a `-` or `--` and these change the default behaviour of the command
-3. The command arguments, the things (e.g. files) that the command is working with.
-
-You can save yourself a lot of typing by using Bash completion, which is pressing the tab key to auto-complate a variety of things like command names, command options, and filenames.
 
 ## Kernel and User Spaces
 
@@ -118,13 +111,13 @@ Coloured output with `ls` makes it easier to see the differences in types of fil
 
 Block files are special files that represent real physical storage devices. Some files inside of `/dev` will be the storage files, you can see them with `ls -l` and look for the `b` in the first letter of the file attributes.
 
-`-r` is a common command option that means recursively apply the command to all objects within the starting location, and the at the end apply it to the starting location.
+`-r` or sometimes `-R` is a common command option that means recursively apply the command to all objects within the starting location, and the at the end apply it to the starting location.
 
 `hexdump` can be used to the view the hexadecimal representation of binary in a file, whether its a text file or a block device files like `/dev/sda`
 
 ## File System Hierarchy
 
-All files in the Linux filesystem are organised into one unified hierachy of folder and files, wtih `/` being the top of the hierarchy. You can think of the Linux filesystem is an inverted tree. The tree trunk is `/`, the branches are the folders (e.g. `/home` and the leaves are the files inside of those folders (e.g. `/root/.bash_rc`). Because the Linux filesystem is a single unified hierachy, all storage devices are located at or inside of `/`. There are a variety of folders commonly found in the Linux filesystem.
+There are a variety of folders commonly found in the Linux filesystem.
 * On Fedora, CentOS, and RHEL `/bin` and `/sbin` are symlinked to `/usr/bin/` and `/usr/sbin/` respectively.
 * `/usr` stands for Unix System Resources and it contains a number of important directories.
 You can use `whereis` to find where a command is.
@@ -137,15 +130,7 @@ You can use `whereis` to find where a command is.
 
 ## vim
 
-`vi` is in the POSIX standard so it will always be installed on the system, `vim` is `vi` improved. It has ia few modes:
-1. Command mode, this is the default mode, any key press is treated as a command.
-2. Extra command mode (i.e. ex command mode), press `:` to enter this mode to enter additional complex commands.
-3. Insert mode, press `i` to enter this mode and any key press is treated as typing into the file
-4. Visual mode, press `v` to enter this mode and you can highlight and select text for copying and pasting.
-
 `Shift` + double `z` will save and exit `vim` when the file already has a name, this is the same as `wq` or `x`.
-
-Use `vimtutor` to learn the basics.
 
 ## Users & Groups
 
@@ -167,28 +152,140 @@ Some basic rules about users and groups:
 
 ## File Permissions
 
-
+If a file is readable but the directory isn't, you cannot access the file. By default permissions are not applied recursively.
 
 ## Software Management
 
+An RPM package is made of 3 things:
+1. An archive file containing everything to be installed.
+2. Scripts used to install or uninstall the archive files.
+3. Metadata about the software being installed, e.g. dependencies.
 
+RPM packages have a standard naming and versioning format, e.g. `httpd-tools-2.4.6-7.el7.x86-64.rpm`:
+* Name (e.g `httpd-tools`): The name of the sofware package.
+* Version (e.g `2.4.6`): The semantic version of the upstream software package.
+* Release (e.g `7.el7`): Updates that have been made to the origianl semantic version of the upstream software package.
+* Architecture (e.g. `x86-64`): The CPU architecture the package can run on.
+
+To install the latest version of packages that have the same version but a different release number, install the highest release number.
+
+There are 3 ways to get packages in RHEL:
+1. The Red Hat website
+2. Red Hat Satellite is an enterprise tool for managing RHEL servers. e.g. subscription monitoring or local `yum` repositories.
+3. The `/etc/yum.repos.d/` text files and HTTPS downloads.
 
 ## Network Configuration
 
+Every network port on the system is named and its assocaited with a network interface, either physical or virtual. Network interfaces have a standard naming convention:
+* `en*` means a physical ethernet interface.
+* `wl*` means a physical wireless interface for WiFi networks.
+* `ww*` means a physical WWAN interface, e.g. cell phone.
+* `eth*` typically means virtual networking interfaces.
+* `lo` means loopback interface.
+* `tun*` means tunneling network interfaces, e.g. VPN.
 
+The `*` in the names above can be inteface numbers, PCI addresses, ports, etc.
+
+There are a handful of things the system needs to know for networking to work. The network interface:
+* Needs to be assigned an IP address.
+* Needs to know the subnet mask for its IP address.
+* Needs to know the IP address of the network's router.
+* Needs to know the IP address of the network's DNS nameserver.
+
+This information is commonly automatically obtained using DHCP.
+
+Network Manager is a system daemon that monitors your network interfaces for configuration and state changes, as well as monitoring the network links themselves to see if they are available. You can use `nmcli` to interact with this. Traditionaly all of this configuration is stored in ifcfg text files within `/etc/sysconfig/network-scripts/`. They are now stored as ini text files within `a`. In `nmcli` interfaces are called devices, connections refer to network connections on interfaces.
+
+```bash
+# View help
+nmcli --help
+
+# Show generic network information
+nmcli
+
+# Show interfaces
+nmcli device show
+
+# Show interface connections
+nmcli connection show
+
+# Show verbose interface connection details
+nmcli connection show $CONNECTION_NAME
+
+# Modify interface configuration files
+nmcli connection modify $CONNECTION_NAME $KEY.$VALUE
+
+# Reload interface configuration files
+nmcli connection reload
+
+# Enable network connection
+nmcli connection up $CONNECTION_NAME
+
+# Disable network connection. Don't turn off connection because the daemon will restart it.
+nmcli device disconnect $DEVICE_NAME
+```
+
+Some common key value pairs for `nmcli` connections are:
+* `ipv4.addresses` IPv4 address and CIDR netmask. Empty string for DHCP.
+* `ipv4.gateway` IPv4 default gateway for routing. Empty string for DHCP.
+* `ipv4.dns` IPv4 DNS name server. Empty string for DHCP.
+* `ipv4.method` `auto` for DHCP or `manual` for status IPv4 address.
+
+`ping` and `traceroute` requests can be blocked by a firewall but network connectivity still exists.
 
 ## System Startup Processes
 
+The boot process for a standard x86 64 bit system is:
+* Power on self test (POST) of hardware.
+* System firmware (e.g. BIOS or UEFI) is validated an runs a bootloader from a system disk.
+  * BIOS loads the bootloader from a disk partition, typically `/boot`
+  * UEFI loads the bootloader from a file system, typically `/boot/efi`
+* The bootloader (e.g. GRUB2) loads an operating system kernel from a system disk.
+* The kernel:
+  * Creates a small in memory filesystem with device drivers that it needs. It is called `initramfs`, i.e. initial RAM file system.
+  * Takes over from the bootloader and starts its system boot process.
+  * Once the kernel boot process is finished, userpace is set up so regular users can use the system. The initial (i.e. init) process with process ID 1 is created and all other processes are spawned off of it.
 
+Traditionally AT&T System 5 was used as the init process but this has been replaced with SystemD.
 
-## Container Introduction
+SystemD thinks of daemons as individual services. It can start these services automatically at boot time or they can be started manually later. SystemD has a concept called target, targets are a group of services. There are 2 common targets:
+1. `graphical.target` starts up standard system serviecs and graphical user interfaces. This includes `multi-user.target`.
+2. `multi-user.target` starts up system daemons or background process and CLI text login. It will disable the GUI login screen.
 
+```bash
+# View the current SystemD target
+systemctl get-default
 
+# Change the current SystemD target from GUI to CLI for the next reboot
+systemctl set-default multi-user.target
 
-## Cockpit Overview
+# Change the current SystemD target from GUI to CLI for the current session
+systemctl isolate multi-user.target
 
+# View SystemD target dependencies, i.e. the services that target will start
+# Omitting $TARGET_NAME shows the default.target
+systemctl list-dependencies $TARGET_NAME
+```
 
+## Getting Help & Learning More
 
-## RHEL Introduction
+Use offline or online `man` pages to access references on how to use the commands. These typically don't include tutorials though. You will typically use section 1 for user commands, section 5 for configuration file formats, and section 8 for admin commands. e.g. `man $SECTION $CMD`. The system will prioritise commands over configuration.
 
+```bash
+# passwd has multiple sections
+# Section 1 is the passwd command
+man 1 passwd
 
+# Section 5 is the /etc/passwd file
+man 5 passwd
+
+# Search by keyword
+man -k $STRING
+apropos $STRING
+```
+
+Use the GNU `info` pages which are modern `man` pages. e.g. `info ls` It has more indepth information than `man` pages.
+
+Pressing F1 in Gnome will open a help window.
+
+Red Hat webpage has help pages, some free and some requiring a login. You can access this in the CLI via `redhat-support-tool`.
