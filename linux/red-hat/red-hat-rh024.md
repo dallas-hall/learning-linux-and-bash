@@ -21,6 +21,8 @@ All of the information here is stuff that wasn't covered in https://linuxcommand
   - [Network Configuration](#network-configuration)
   - [System Startup Processes](#system-startup-processes)
   - [Getting Help & Learning More](#getting-help--learning-more)
+  - [Introduction To Containers](#introduction-to-containers)
+  - [Cockpit Overview](#cockpit-overview)
 
 ## Why Linux?
 
@@ -72,7 +74,7 @@ The kernel is the heart of the linux operating system. It is responsible for sch
 
 Kernel space (e.g. drivers, networking, etc) is where all kernel related processes run. All non-kernal programs (e.g. a shell or browser) run in user space.
 
-User space programs interact with the kernel through special devices or system calls that they make. Each running program is called a process and it has its own private virtual memory space, and runs as a particular `user:group` so it can access files on the file system. A process has a state (e.g. running) and a unique process identification number called a PID.
+User space programs interact with the kernel through special devices or system calls that they make. Each running program is called a process and it has its own private virtual memory space, and runs as a particular `user:group` so it can access files on the file system. A process has a state (e.g. running, waiting to run, or blocked) and a unique process identification number called a PID.
 
 There are 3 types of processes:
 1. **User processes** are generally assocaited with a user and are associated with a terminal. They can be run in the foreground (consuming the terminal input) or in the background (the terminal is available for input).
@@ -119,18 +121,23 @@ Block files are special files that represent real physical storage devices. Some
 
 There are a variety of folders commonly found in the Linux filesystem.
 * On Fedora, CentOS, and RHEL `/bin` and `/sbin` are symlinked to `/usr/bin/` and `/usr/sbin/` respectively.
+  * `/bin` is for all users and `/sbin` is for the root user.
 * `/usr` stands for Unix System Resources and it contains a number of important directories.
 You can use `whereis` to find where a command is.
 * `/boot` contains the kernel and the files necessay to load the kernel. The kernel file starts with `vmlinuz`. GRUB2 is the bootloader that initialises the kernel.
 * `/dev` contains device files.
-* `/etc` stands for Extended Text Configurations.
+* `/etc` stands for Extended Text Configurations. Global configuration files are here.
 * `/lib` and `lib64` contains shared libraries for applications.
 * `/tmp` is a location for temporary data. The contents of this directory are removed after 10 days.
 * `/var` has data that varies, such as logs and spools. There is also a `/var/tmp` as well, which is cleared every 50 days.
 
+The `whereis` command can be used to locate a file's location and `man` page entries.
+
 ## vim
 
-`Shift` + double `z` will save and exit `vim` when the file already has a name, this is the same as `wq` or `x`.
+`Shift` + double `z` will save and exit `vim` when the file already has a name, this is the same as `:wq` or `:x`.
+
+ex commands `:` means extended command.
 
 ## Users & Groups
 
@@ -154,6 +161,8 @@ Some basic rules about users and groups:
 
 If a file is readable but the directory isn't, you cannot access the file. By default permissions are not applied recursively.
 
+When validating permissions, the *user:group:other rwx* permissions are visited left to right and the first match is used to grant permissions. If there are no matches then permission is denied.
+
 ## Software Management
 
 An RPM package is made of 3 things:
@@ -164,7 +173,7 @@ An RPM package is made of 3 things:
 RPM packages have a standard naming and versioning format, e.g. `httpd-tools-2.4.6-7.el7.x86-64.rpm`:
 * Name (e.g `httpd-tools`): The name of the sofware package.
 * Version (e.g `2.4.6`): The semantic version of the upstream software package.
-* Release (e.g `7.el7`): Updates that have been made to the origianl semantic version of the upstream software package.
+* Release (e.g `7.el7`): Updates that have been made to the origianl semantic version of the upstream software package. These updates are made by the packager of the software.
 * Architecture (e.g. `x86-64`): The CPU architecture the package can run on.
 
 To install the latest version of packages that have the same version but a different release number, install the highest release number.
@@ -173,6 +182,14 @@ There are 3 ways to get packages in RHEL:
 1. The Red Hat website
 2. Red Hat Satellite is an enterprise tool for managing RHEL servers. e.g. subscription monitoring or local `yum` repositories.
 3. The `/etc/yum.repos.d/` text files and HTTPS downloads.
+
+Installed rpm files are kept inside of a database.
+
+`subscription-manager` is used to access Red Hat packaged rpms.
+
+A satellite server can be used to centrally host rpm files. So all rpms get downloaded once by the satellite server and every other server downloads from the satellite server.
+
+Local repositories are repos that aren't provided by Red Hat, they are provided by third parties. e.g. Google to install Google Chrome. These repos are configured in text files ending in `.repo` that are inside of `/etc/yum.repos.d/`.
 
 ## Network Configuration
 
@@ -231,6 +248,8 @@ Some common key value pairs for `nmcli` connections are:
 * `ipv4.dns` IPv4 DNS name server. Empty string for DHCP.
 * `ipv4.method` `auto` for DHCP or `manual` for status IPv4 address.
 
+**Note:** Use a `+` to append IP addresses to the existing ones.
+
 `ping` and `traceroute` requests can be blocked by a firewall but network connectivity still exists.
 
 ## System Startup Processes
@@ -248,11 +267,37 @@ The boot process for a standard x86 64 bit system is:
 
 Traditionally AT&T System 5 was used as the init process but this has been replaced with SystemD.
 
-SystemD thinks of daemons as individual services. It can start these services automatically at boot time or they can be started manually later. SystemD has a concept called target, targets are a group of services. There are 2 common targets:
+SystemD thinks of daemons as individual services. It can start these services automatically at boot time or they can be started manually later. SystemD manages units and there are various types of units, e.g. services for daemons, sockets for TCP ports, paths for files and directories, targets for a group of units, and timers.
+
+```bash
+# View all SystemD unit file
+sytemctl list-unit-files
+
+# View specific SystemD unit, e.g. a service
+systemctl list-units --type service
+
+# View the status of a SystemD unit, e.g. the sshd service
+systemctl status sshd
+```
+
+```
+○ sshd.service - OpenSSH server daemon
+     Loaded: loaded (/usr/lib/systemd/system/sshd.service; disabled; vendor preset: disabled)
+     Active: inactive (dead)
+       Docs: man:sshd(8)
+             man:sshd_config(5)
+```
+
+Services that are enable automatically start at boot time. SystemD services that are restarted get a new PID. SystemD services that are reloaded keep the same PID and read their configuration files from the filesystem and update their copy of the config file in the system's memory which it is using to run.
+
+SystemD has a concept called target, targets are a group of services. There are 2 common targets:
 1. `graphical.target` starts up standard system serviecs and graphical user interfaces. This includes `multi-user.target`.
 2. `multi-user.target` starts up system daemons or background process and CLI text login. It will disable the GUI login screen.
 
 ```bash
+# Enable and start a SystemD unit in one line
+systemctl enable --now $UNIT
+
 # View the current SystemD target
 systemctl get-default
 
@@ -289,3 +334,20 @@ Use the GNU `info` pages which are modern `man` pages. e.g. `info ls` It has mor
 Pressing F1 in Gnome will open a help window.
 
 Red Hat webpage has help pages, some free and some requiring a login. You can access this in the CLI via `redhat-support-tool`.
+
+You can sign up as a developer at Red Hat and use some RHEL services for free.
+
+The Red Hat Learning Subscription gives you access to every class Red Hat has.
+
+## Introduction To Containers
+
+`podman` can run containers in a more efficient way than `docker`.
+`buildah` can be used to build containers.
+`skopeo` can be used to copy images and inspect their metadata.
+`container-tools` is a package that can install the above container apps.
+
+Red Hat has a container registry at https://access.redhat.com/containers/ which contains images created and supported by Red Hat.
+
+## Cockpit Overview
+
+This is a web interface for monitoring and managing Linux systems. It is run via SystemD `cockpit.socket` unit file, running on TCP port 9090. The web app requires you to log in with a user that has privileged access to the hosts it is monitoring and managing. This web app is a GUI for system administration.
