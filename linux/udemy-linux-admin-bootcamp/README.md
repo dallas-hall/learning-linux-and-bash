@@ -27,6 +27,9 @@ All of the information here is stuff that wasn't covered in https://linuxcommand
   - [Filesystems](#filesystems)
   - [Mounting](#mounting)
   - [Logical Volume Manager (LVM)](#logical-volume-manager-lvm)
+    - [Create & Extend LVM](#create--extend-lvm)
+    - [Delete LVM](#delete-lvm)
+    - [Migratiting LVM Data](#migratiting-lvm-data)
 
 # Basic Knowledge
 
@@ -277,3 +280,105 @@ LVM allows you to:
 * Give your storage volumes human readable descriptive names.
 * Stripe or mirror data across multiple disks.
 * Create point in time filesystem snapshots.
+
+
+There are multiple layers of abstraction with LVM:
+* (Top) File system, e.g. ext4 installed into the LV.
+* Logical Volumes (LV), is a partitioned VG.
+  * LVs contain extents, a small fixed sized chunk. There are logical extents within LVM and phyiscal extents on the storage devices. LVM maps logical extents to phyiscal extents. You cannot use all available extents, some are set aside for metadata.
+* Volume Group (VG) is a group of combined PVs.
+* Phyiscal Volume (PV), regular storage device(s) that have been allocated for LVM.
+* (Bottom) Storage devices, any regular block storage device (e.g. HDD or SSD).
+
+**Note:** `/boot` cannot be on a logical volume group because the boot loader cannot read it.
+
+The high level steps to using LVM are:
+1. Create your PV(s) from storage devices.
+2. Create your VG from your PV.
+3. Create your LV(s) from your VG.
+4. Install a file system into the LV(s).
+
+### Create & Extend LVM
+
+```bash
+# Show disk information
+lvmdiskscan
+lsblk
+df -h
+fdisk -l
+
+# Create a PV
+pvcreate /dev/$STORAGE_DEVICE
+
+# View PV
+pvs
+
+# Create a VG
+vgcreate vg_$NAME /dev/$STORAGE_DEVICE
+
+# Extend a VG
+vgextend vg_$NAME /dev/$STORAGE_DEVICE
+
+# View VG
+vgs
+
+# Create LV
+# Add -m $NUMBER to create a RAID
+lvcreate -L $SIZE -n lv_$NAME vg_$NAME
+lvcreate  -l $PERCENT_FREE -n lv_$NAME vg_$NAME
+
+# Extend and resize the LV.
+# Use + to add the specified size, without it you need to calculate total size.
+# -r will resize the LV.
+lvextend -L +$SIZE -r $LV_PATH
+
+# Manually resize if you forget -r
+resize2fs $LV_PATH
+
+# View LV
+# Cpy&Sync shows RAID LV details.
+lvs
+lvdisplay
+
+# Create file system
+mkfs -t ext4 $LV_PATH
+
+# Mount the file system
+mkdir -p $MOUNT_PATH
+mount $LV_PATH $MOUNT_PATH
+```
+
+### Delete LVM
+
+```bash
+# Unmount the LV
+umount $MOUNT_PATH
+
+# Delete LV(s)
+lvs
+lvremove $LV_PATH
+
+# Delete VG(s)
+vgs
+# Use this when multiple PVs are in the VG
+vgreduce vg_$NAME
+# Use this when 1 PV is in the VG
+vgremove vg_$NAME
+
+# Delete PV(s)
+pvs
+pvremove /dev/$STORAGE_DEVICE
+```
+
+### Migratiting LVM Data
+
+```bash
+# Create PV
+pvcreate /dev/$STORAGE_DEVICE
+
+# Add PV to existing VG
+lvextend $LV_PATH /dev/$STORAGE_DEVICE
+
+# Migrate data
+pvmove /dev/$SOURCE_STORAGE_DEVICE /dev/$TARGET_STORAGE_DEVICE
+```
