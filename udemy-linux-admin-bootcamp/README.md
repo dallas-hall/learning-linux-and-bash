@@ -30,6 +30,8 @@ All of the information here is stuff that wasn't covered in https://linuxcommand
     - [Create & Extend LVM](#create--extend-lvm)
     - [Delete LVM](#delete-lvm)
     - [Migratiting LVM Data](#migratiting-lvm-data)
+  - [Users](#users)
+  - [Networking](#networking)
 
 # Basic Knowledge
 
@@ -382,3 +384,29 @@ lvextend $LV_PATH /dev/$STORAGE_DEVICE
 # Migrate data
 pvmove /dev/$SOURCE_STORAGE_DEVICE /dev/$TARGET_STORAGE_DEVICE
 ```
+
+## Users
+
+The first entry in `/etc/passwd` is always for root. The format of this is file is a `:` separated list of information about the user. `username:password (always x):UID:GID:comments:home folder:shell`
+* Usernames can be up to 32 characters but typically 8 or less is used. Sometimes usernames greater than 8 characters will have the UID displayed instead.
+* The password is no longer stored here and always is `x`. The password hash is stored in `/etc/shadow` which only readable by `root`. The format of this is file is a `:` separated list of information about the user's password.
+  * Username
+  * Password hash
+  * The date of the last password change, expressed as the number of days since Jan 1, 1970 (Unix time). `0` means to change password at next login.
+  * The number of days left before the user is allowed to change their password.
+  * The maximum number of days the password is valid, after that user is forced to change her password again. `99999` means never expire.
+  * The number of days before password is to expire that user is warned that their password must be changed.
+  * The number of days after password expires that account is disabled.
+  * The date of expiration of the account, expressed as the number of days since Jan 1, 1970.
+* The `newgrp` command can be used to create files and folders with a different primary group.
+* If the users home folder doesn't exist in the filesystem it will be placed inside of `/`
+* The `/etc/shells` file shows what shells are supported by the system. There is also `/usr/sbin/nologin` and `/bin/false` for accounts that cannot login, i.e. service and system accounts.
+
+`/etc/login.defs` defines the UID and GUID ranges for users. Use the same UID and GUID across multiple servers.
+
+`/etc/group` contains group information. The format of this is file is a `:` separated list of information about the user. `group name:password:GUID:user1,...,usern`. If password is `x` then this group has a password in `/etc/shadow`, which is rarely used.
+
+`groups` displays groups for the current user and `group username` displays groups for the specified user.
+
+## Networking
+
