@@ -42,7 +42,7 @@ warn() {
 }
 
 debug() {
-	printf "${BLUE}[WARN]${NC} %s\n" "$*"
+	printf "${BLUE}[DEBUG]${NC} %s\n" "$*"
 }
 
 # Tests
