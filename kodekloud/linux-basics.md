@@ -1,10 +1,19 @@
-# Linux Basics
+Linux Basics <!-- omit in toc -->
+============
 
 Learning Linux Basics Course & Labs from KodeKloud. https://kodekloud.com/courses/the-linux-basics-course/
 
 **NOTE:** Everything listed here isn't present in any other Linux resources that I've done. The full content is availabe at https://github.com/kodekloudhub/linux-basics-course
 
-## Working With The Shell Part 1
+- [Working With The Shell Part 1](#working-with-the-shell-part-1)
+- [Working With The Shell Part 2](#working-with-the-shell-part-2)
+  - [Anki cards needed below this line.](#anki-cards-needed-below-this-line)
+- [Networking](#networking)
+- [Security \& File Permissions](#security--file-permissions)
+- [Service Management](#service-management)
+- [Storage](#storage)
+
+# Working With The Shell Part 1
 
 The `pushd` commands adds directories to a stack. You can add as many as you like. Use `popd` to return the latest directory from the stack. You can view the stack with `dirs`.
 
@@ -114,8 +123,76 @@ The manifest contains the information required for that particular software to r
 
 ![alt text](image-21.png)
 
-`apt` and the original `apt-get` are the frontend of the `dpkg` package manager. Similarly, `dnf` and the original `yum` are the frontend of the `rpm` package manager.
+`apt` and the original `apt-get` are the frontend of the `dpkg` package manager. Similarly, `dnf` and the original `yum` are the frontend of the `rpm` package manager. These frontends provide dependency resolution and other advanced features.
 
 ![alt text](image-22.png)
 
-## Working With The Shell Part 2
+The Red Hat Package manager uses `.rpm` files and has 5 main methods:
+1. Installing `rpm -i $RPM_FILE`
+2. Uninstalling `rpm -e $RPM_FILE`,
+3. Upgrading `rpm -U $PACKAGE`,
+4. Querying `rpm -q $PACKAGE` to query the `/var/lib/rpm` database,
+5. Verifying `rpm -V $PACKAGE`.
+
+`/etc/yum.repos.d/redhat.repo` points to the official Red Hat repository.
+
+![alt text](image-23.png)
+
+`yum repolist` shows all repositories in the system.
+
+![alt text](image-24.png)
+
+`yum provides $PACKAGE` shows which repo provides `$PACKAGE`.
+
+![alt text](image-25.png)
+
+![alt text](image-26.png)
+
+The Debian Package manager uses `.deb` files and has 5 main methods:
+1. Installing `dpkg -i $DEB_FILE`
+2. Uninstalling `dpkg -i $DEB_FILE`,
+3. Upgrading `dpkg -l $PACKAGE`,
+4. Querying `dpkg -s $PACKAGE`,
+5. Verifying `dpkg -p $PACKAGE_PATH`.
+
+`/etc/apt/sources.list` contains repositories.
+
+![alt text](image-27.png)
+
+`apt edit-sources` opens `/etc/apt/sources.list` in a text editor for editing.
+
+`apt search $PACKAGE` to search for a package.
+
+`apt list | grep $PACKAGE` to search all available packages.
+
+Use `apt` over `apt-get`.
+
+# Working With The Shell Part 2
+
+Anki cards needed below this line.
+---
+
+File compression is a process of reducing the size of one or more files to make them smaller and more manageable. This is typically done to save storage space, reduce bandwidth usage when transmitting files over networks, and speed up file transfers.
+
+There are 3 popular compression tools in Linux:
+1. `bzip2` which can be uncompressed with `bunzip2`.
+2. `gzip` which can be uncompressed with `gunzip`.
+3. `xz` which can be uncompressed with `unxz`.
+
+![alt text](image-28.png)
+
+You can work with compressed files with tools like:
+* `zcat`, `bzcat`, and `xzcat`.
+* `zless`, `bzless`, and `xzless`.
+* `zgrep`, `bzgrep`, and `xzgrep`.
+* `zdiff`, `bzdiff`, and `xzdiff`.
+
+![alt text](image-29.png)
+
+# Networking
+
+# Security & File Permissions
+
+# Service Management
+
+# Storage
