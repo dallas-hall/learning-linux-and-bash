@@ -189,6 +189,16 @@ You can work with compressed files with tools like:
 
 ![alt text](image-29.png)
 
+Use `locate $FILENAME` to search for a file in a database of paths. You can update this database with `updatedb`. This requires M-locate DB to be installed.
+
+![alt text](image-30.png)
+
+`grep -v $STRING` can be used to match all lines that don't have `$STRING`.
+
+`grep -w $WORD` can be used to search for words boundaries.
+
+`update-alternatives --display editor` shows which editor is being used.
+
 # Networking
 
 # Security & File Permissions
