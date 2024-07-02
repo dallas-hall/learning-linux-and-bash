@@ -201,6 +201,58 @@ Use `locate $FILENAME` to search for a file in a database of paths. You can upda
 
 # Networking
 
+By default the `/etc/hosts` file takes precedence over the `/etc/resolv.conf` file. This can be changed with `/etc/nsswitch.conf` and the `hosts:` section.
+
+The DNS server can also be configured to forward unresolvable traffic elsewhere.
+
+![alt text](image-31.png)
+
+Adding `search $DOMAIN` into `/etc/resolv.conf` simplifies hostname resolution by automatically appending domain suffixes to hostnames, thereby reducing the need for fully qualified domain name entries in various network commands.
+
+![alt text](image-32.png)
+
+`nslookup` ignores `/etc/hosts` when doing DNS resolution. `dig` is an alternative to `nslookup`.
+
+![alt text](image-33.png)
+
+A switch can only deliver packets within the same network. A router is needed to forward packets between networks.
+
+![alt text](image-34.png)
+
+A gateway is needed to define where to send packets outside of the network, i.e. to a router.
+
+The `route` command output can be read as follows:
+* Destination: This column shows the destination network or IP address. It indicates where packets are being routed.
+* Gateway: This column displays the IP address of the gateway (router) that packets should be sent to in order to reach the destination network.
+  * `Gateway *` or `Gateway 0.0.0.0` in the route output indicates that the route is directly connected, and packets destined for the specified network can be sent directly through the associated network interface without involving a gateway router.
+* Genmask (Netmask): This column specifies the netmask associated with the destination network. It determines the size of the network that the route applies to.
+* Flags: These are flags that describe the route's properties, such as whether it's a host-specific route (U for up), a gateway route (G), or a dynamically created route (D).
+
+```
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+default         192.168.1.1     0.0.0.0         UG    100    0        0 eth0
+192.168.1.0     *               255.255.255.0   U     0      0        0 eth0
+```
+
+* `default`: This route directs all packets with no specific route match to 192.168.1.1, which is the default gateway.
+* `192.168.1.0`: This route indicates that packets destined for the 192.168.1.0/24 network (i.e., IP addresses from 192.168.1.1 to 192.168.1.254) should be sent directly through the eth0 interface.
+
+`ip` commands are not persistent unless they are added to the `/etc/network` file.
+
+Use `ip link set dev $NIC up` to enable an interface.
+
+Use `ip route add default via $IP_ADDRESS` to add a default route.
+
+These are the basic network troubleshooting steps:
+* Check your interface is up with `ip -c -h a`
+* Check DNS is working with `nslookup $HOSTNAME`
+* Check if you can `ping` the remote host. This may be blocked though.
+* Check if there are any network problems between you and the host with `traceroute $IP` or `mtr $IP`
+* Connect to the host and check if the interface is up with `ip -c -h a`
+* Connect to the host and check if the service is running with `ss -lntp` or `ss -untp`.
+
+
 # Security & File Permissions
 
 # Service Management
