@@ -252,8 +252,33 @@ These are the basic network troubleshooting steps:
 * Connect to the host and check if the interface is up with `ip -c -h a`
 * Connect to the host and check if the service is running with `ss -lntp` or `ss -untp`.
 
-
 # Security & File Permissions
+
+There are a lot of layers to security in Linux.
+
+![alt text](image-35.png)
+
+Inside of `/etc/passwd`:
+* The `x` in the `PASSWORD` field means the user's password is set inside of `/etc/shadow`.
+* The `GECOS` field can be a CSV of anything, typically it will be things like `Name, phone, address` etc.
+
+![alt text](image-36.png)
+
+Inside of `/etc/shadow`:
+* An empty `PASSWORD` field means the password was never set.
+* The `LASTCHANGE` field is a Unix epoch number representing when the password was last changed.
+* The `MINAGE` field defines how many days a user must wait before being able to change their password.
+* The `MAXAGE` field defines how many days until a user is forced to change their password.
+* The `WARN` field is how many days to print a warning before a password will expire.
+* The `INACTIVE` field is how many days after a password has expired that it can be accepted before the account is disabled without a password change.
+* The `EXPDATE` field is a Unix epoch number representing when the password will expire.
+* If fields are empty they will not be enforced.
+
+![alt text](image-37.png)
+
+Inside of `/etc/group` the `x` in the `PASSWORD` field means the user's password is set inside of `/etc/shadow`.
+
+![alt text](image-38.png)
 
 # Service Management
 
