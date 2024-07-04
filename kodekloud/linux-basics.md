@@ -280,6 +280,20 @@ Inside of `/etc/group` the `x` in the `PASSWORD` field means the user's password
 
 ![alt text](image-38.png)
 
+Linux permissions are checked sequentially until permission is granted or there is nothing left to check. The user is checked first, followed by the group, and followed by other.
+
+If you add `sudo` into a cronjob it will be run under the `root` user's cron.
+
+You can use step values in cron. e.g. `*/2` in the minute field means run the job every 2 minutes. The full list is:
+* `*`	is any value.
+* `,`	is a value list separator.
+* `-` is a range of values.
+* `/` is step values.
+
+Use https://crontab.guru/ to make it easy.
+
+![alt text](image-39.png)
+
 # Service Management
 
 # Storage
