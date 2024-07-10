@@ -294,6 +294,43 @@ Use https://crontab.guru/ to make it easy.
 
 ![alt text](image-39.png)
 
+There are 3 types of `iptables` chains:
+1. `INPUT` which is incoming / ingress traffic.
+2. `FORWARD` which is incoming / ingress traffic that is being forwarded.
+3. `OUTPUT` which is outgoing / egress traffic.
+
+![alt text](image-40.png)
+
+They are called chains because they can have a list of rules. Each rules in the chain's list is checked iteratively until a matching rule is found. You need to explicitly add a rule to block traffic and it typically is the last rule in the chain.
+
+![alt text](image-41.png)
+
+Here are some common `iptables` options:
+* `-A` to add a rule to the end of the chain.
+* `-I` to add a rule at the top of the chain or into the specified position.
+* `-D` to delete the specified rule from the specified chain.
+* `-p` to specify a protocol.
+* `-s` to specify the source.
+* `-d` to specify the destination.
+* `-dport` to specifty the destination port.
+* `-j` to specify the action to take. Which could be:
+    * `ACCEPT` means to allow traffic.
+    * `DROP` means to block traffic.
+
+![alt text](image-42.png)
+
+![alt text](image-43.png)
+
+You do not need a specific rule for callback traffic. You only need an `OUTPUT` rule for egress traffic on the source and an `INPUT` rule for ingress traffic on the destination. The callback traffic is automatically handled via a random TCP/IP port.
+
+![alt text](image-44.png)
+
+There is a common ephermeral port range which is `32,768` to `60,999`
+
+![alt text](image-45.png)
+
+`iptables -A INPUT -j DROP` to drop all incoming traffic.
+
 # Service Management
 
 # Storage
