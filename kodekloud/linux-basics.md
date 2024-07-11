@@ -333,4 +333,28 @@ There is a common ephermeral port range which is `32,768` to `60,999`
 
 # Service Management
 
+System D services are automatically logged to the System D Journal which is accessible via `journalctl`. The `[Unit]` section can be used to define another service that must be running before this service is started.
+
+![alt text](image-46.png)
+
+You can use `systemctl` for a variety of purposes.
+
+![alt text](image-47.png)
+
+The `Activating` and `Deactivating` `systemctl status $SERVICE` states are used when a service is inbetween `Active`, `Inactive`, or `Failed`.
+
+You can edit System D service files with `systemctl edit $SERVICE --full` and these changes are applied immediately without needing to do `systemctl daemon-reload`
+
+`systemctl cat $SERVICE` can be used to show the service.
+
+`systemctl list-units` shows information about active units and `systemctl list-units --all` shows information about all units.
+
+`journalctl -b` shows all logs since the current boot (`-b`).
+
+`journalctl -b -1` shows all logs since the current boot (`-b`) minus _n_ (`-1`).
+
+`journalctl -b -p err` shows all error (`-p err`) logs since the current boot (`-b`).
+
+`journalctl -xe` starts at the end of the log (`-e`) and shows additional context (`-x`).
+
 # Storage

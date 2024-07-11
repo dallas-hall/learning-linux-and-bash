@@ -1,8 +1,0 @@
-echo "[INFO] Display line numbers with -n"
-echo -e "$ cat -n filename\n"
-echo "[INFO] Display lines with text only with -b"
-echo -e "$ cat -b filename\n"
-echo "[INFO] Replace tabs with space with -T"
-echo -e "$ cat -T filename\n"
-echo "[INFO] Squash consecutive blank lines with -s"
-echo "$ cat -s filename"

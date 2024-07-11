@@ -1,1 +1,0 @@
-echo "$ man -k keyword-to-search-for"

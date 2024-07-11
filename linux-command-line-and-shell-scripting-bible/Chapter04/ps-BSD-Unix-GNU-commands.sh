@@ -1,8 +1,0 @@
-echo "[INFO] ps supports 3 styles of command parameters, Unix, BSD, and GNU."
-echo "[INFO] Unix style parameters are preceded with a dash."
-echo -e "$ ps -ef\n"
-echo "[INFO] BSD style parameters are preceded with nothing."
-echo -e "$ ps aux\n"
-echo "[INFO] GNU style parameters are preceded with double dashes."
-echo -e "$ ps -ef --forest\n"
-echo "[INFO ps aux and ps -ef are practically the same."
