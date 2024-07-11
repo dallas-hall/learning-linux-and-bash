@@ -98,7 +98,7 @@ There are 3 types of files in Linux:
 
 There are 5 special file types:
 1. Character files are serial devices in `/dev` like the mouse and keyboard.
-2. Block files are block storage devices in `/dev` like HDD and RAM.
+2. Block files are block storage devices in `/dev` like HDDs, SSDs, and RAM.
 3. Links:
    1. Hard Links
    2. Symbolic LInks
@@ -358,3 +358,40 @@ You can edit System D service files with `systemctl edit $SERVICE --full` and th
 `journalctl -xe` starts at the end of the log (`-e`) and shows additional context (`-x`).
 
 # Storage
+
+A block devices are a file in `/dev` for data storage hardware like HDDs, SSDs, and RAM. They are called block storage because data is written into chunks called blocks.
+
+`ls -l /dev | grep '^b'` can show block devices and their major and minor numbers.
+* The major number identifies the driver associated with the device.
+* You can view major numbers in `/proc/devices`.
+* `sd` is number 8 which is for SCSI disks.
+* The minor number is only used by the driver.
+
+
+Disk partitions are the logical sections of a physical storage device. They enable you to divide the whole storage device into sections which can be managed independently.
+
+`fdisk -l /dev/$DEVICE` displays information about the storage device's partitions.
+
+![alt text](image-48.png)
+
+There are 3 types of disk partitions:
+1. **Primary partition**, a partition that contains one filesystem only.
+   1. Traditional partitioning schemes like the Master Boot Record (MBR) only allow for 4 primary partitions per disk.
+2. **Extended partition**, a partition that only contains logical filesystems.
+   1. Only one extended partition is allowed. It is used to get around the 4 primary partition limit.
+3. **Logical partition**, a partition that is contained inside the extended partition and it stores data on a single filesystem.
+   1. There can be many logical partitions with different filesystems within the extended partition.
+
+![alt text](image-49.png)
+
+The maximum partition size in an MBR partition is 2 terabytes (TB).
+
+GUID Partition Table (GPT) was created to address the limitations of the MBR partitioning scheme. The maximum partition size and the maximum amount of partitions in GPT is goverened by the O/S.
+
+![alt text](image-50.png)
+
+`gdisk` is an improved version of `fdisk`. Use either `fdisk /dev/$DEVICE` or `gdisk /dev/$DEVICE` to manipulate a disk's partitions.
+* `?` to view the help which explains how to use it.
+* `+500M` would add 500 Megabytes (MB).
+
+![alt text](image-51.png)
