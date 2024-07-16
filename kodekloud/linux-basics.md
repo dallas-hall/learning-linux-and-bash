@@ -395,3 +395,86 @@ GUID Partition Table (GPT) was created to address the limitations of the MBR par
 * `+500M` would add 500 Megabytes (MB).
 
 ![alt text](image-51.png)
+
+There are 3 steps to using a disk.
+1. Create a disk partition.
+2. Create a filesystem.
+   1. This defines how data is stored on the disk.
+3. Mount the filesystem to a folder.
+
+![alt text](image-52.png)
+
+`ext2` doesn't use a journal.
+
+An `ext4` filesystem can be mounted as an `ext3` or `ext2` filesystem. An `ext3` filesystem can be mounted as an `ext2` filesystem.
+
+![alt text](image-53.png)
+
+`mkfs.ext4 $DEVICE_PATH` will create an `ext4` filesystem on the specified `$DEVICE_PATH`.
+
+![alt text](image-54.png)
+
+Use the `/etc/fstab` to make a partition mount automatically available after reboot.
+
+![alt text](image-55.png)
+
+![alt text](image-56.png)
+
+There are 3 common enterprise grade, high capacity, and external storage.
+1. **Direct Attached Storage (DAS).**
+2. **Network Attached Storage (NAS).**
+3. **Storage Area Network (SAN).**
+
+![alt text](image-57.png)
+
+DAS refers to storage devices directly attached to a server or a computer, typically through a cable such as SATA, SAS, or USB. It is direct block-level access.
+
+![alt text](image-58.png)
+
+NAS is a storage device (or multiple drives) connected to a network, providing file-level data access to multiple clients simultaneously. This is typically over the **Network File System (NFS) protocol**.
+
+![alt text](image-59.png)
+
+SAN is a dedicated high-speed network that connects storage devices (storage arrays) to servers, providing block-level storage access. This can be over ethernet or **Fibre Channel Protocol (FCP)**.
+
+![alt text](image-60.png)
+
+
+NFS is a distributed file system protocol that allows a client system to access files over a network as if they were stored locally. It doesn't save data in blocks, it saves it in files.
+
+![alt text](image-61.png)
+
+In NFS directory sharing is called exports. `/etc/exports` is an NFS server file that defines which clients can access the NFS server folders.
+
+![alt text](image-62.png)
+
+Running `exportfs -a` can export all NFS server shares to the defined clients. `exportfs -o $CLIENT:$NFS_PATH` can be used to export to a single client. Clients will still need to mount these folders locally.
+
+![alt text](image-63.png)
+
+**Logical Volume Manage (LVM)** is a software-based system used for managing storage volumes on Linux operating systems. It provides a layer of abstraction between physical disks (or disk partitions) and the file systems mounted on them. There are 4 key concepts in LVMs.
+1. **Physical Volume (PV)**  are individual storage devices or partitions.
+2. **Volume Groups (VG)** are created by combining one or more Physical Volumes into a single storage pool.
+3. **Logical Volumes (LV)** are virtual partitions created within Volume Groups.
+4. LVM maps LVs onto PVs using extent mapping. An **extent** is a fixed-size block of storage (typically 4 MB) that serves as the basic unit of allocation within LVM.
+
+![alt text](image-64.png)
+
+There are 5 steps to using LVMs.
+1. Create a Physical Volume (PV) with `pvcreate $DEVICE_PATH`
+2. Create a Volume Group (VG) with `vgcreate $VG_NAME $DEVICE_PATH`. You can use 1 or many PVs.
+3. Create a linear Logical Volume (LV) with `lvcreate -L $SIZE -n $LV_NAME $VG_NAME`. There are many other types of LVs, e.g. striped, RAID 1, etc.
+4. Create a filesystem on the LV with `mkfs.ext4 /dev/$VG_NAME/$LV_NAME`
+5. Mount the LV into the filesystem witrh `mount -t ext4 /dev/$VG_NAME/$LV_NAME $MOUNT_PATH`
+
+`pvs`, `vgs`, and `lvs` can be used to view basic details about PVs, VGs, and LGs respectively.
+
+`pvdisplay`, `vgdisplay`, and `lvdisplay` can be used to view details about PVs, VGs, and LGs respectively.
+
+There are 2 steps to resize an LV.
+1. Resize the linear LV with `lvresize -L +$SIZE -n /dev/$VG_NAME/$LV_NAME`.
+2. Resize the filesystem with `resize2fs /dev/$VG_NAME/$LV_NAME`.
+
+LVs are available for access at 2 places:
+1. `/dev/$VG_NAME/$LV_NAME`.
+2. `/dev/mapper/$VG_NAME-$LV_NAME`.
